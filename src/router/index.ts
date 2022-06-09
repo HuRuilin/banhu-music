@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/home.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -7,13 +7,35 @@ const routes: Array<RouteRecordRaw> = [
     name: 'home',
     component: HomeView
   },
+  // 排行榜
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/rankingList',
+    name: 'rankingList',
+    component: () => import('../views/rankingList/index.vue')
+  },
+  // 歌单
+  {
+    path: '/songList',
+    name: 'songList',
+    component: () => import('../views/songList/index.vue')
+  },
+  // 歌手
+  {
+    path: '/singers',
+    name: 'singers',
+    component: () => import('../views/singers/index.vue')
+  },
+  // 视频
+  {
+    path: '/videos',
+    name: 'videos',
+    component: () => import('../views/videos/index.vue')
+  },
+  // MV
+  {
+    path: '/MV',
+    name: 'MV',
+    component: () => import('../views/MV/index.vue')
   }
 ]
 
