@@ -1,13 +1,15 @@
 <template>
-    <ul class="menus">
-      <li class="menu-item" v-for="item in navList" :key="item.path" @click="handleClick(item)">{{ item.name }}</li>
-    </ul>
+  <ul class="menus">
+    <li class="menu-item" v-for="item in navList" :key="item.path">
+      <router-link exact-active-class="highlight" :to="item.path">
+        {{ item.name }}
+      </router-link>
+    </li>
+  </ul>
 </template>
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
 const navList = reactive([
   {
     name: '发现音乐',
@@ -34,15 +36,30 @@ const navList = reactive([
     path: '/MV'
   }
 ])
-const handleClick = (item:any) => {
-  router.push(item.path)
-}
 </script>
 
 <style scoped lang="scss">
-.menus{
+.menus {
   width: 60%;
   cursor: pointer;
-  @include flex(space-between,center);
+  @include flex(space-between, center);
+  .menu-item {
+    position: relative;
+    .highlight {
+      color: red;
+      &::after {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        background-color: red;
+        border-radius: 100%;
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-2px);
+      }
+    }
+  }
 }
 </style>
