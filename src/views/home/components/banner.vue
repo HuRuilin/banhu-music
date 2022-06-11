@@ -22,8 +22,8 @@ const state = reactive<State>({
 })
 // 请求列表
 const getList = async function () {
-  const { banners } = await getBanner()
-  state.list = banners
+  const res = await getBanner()
+  state.list = res.data.banners
 }
 onBeforeMount(() => {
   getList()

@@ -1,3 +1,4 @@
+import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import axios from 'axios'
 
 const service = axios.create({
@@ -8,7 +9,7 @@ const service = axios.create({
 
 // request interceptor
 service.interceptors.request.use(
-  async (config) => {
+  async (config: AxiosRequestConfig) => {
     return config
   },
   error => {
@@ -18,8 +19,8 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  response => {
-    return response.data
+  (response: AxiosResponse) => {
+    return response
   },
   error => {
     return Promise.reject(error)
