@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import store from './store/index'
 import 'normalize.css'
 import './styles/index.scss'
 import ElementPlus from 'element-plus'
@@ -13,4 +14,5 @@ app.config.globalProperties = Object.assign(app.config.globalProperties, globalP
 
 app.use(router)
 app.use(ElementPlus)
+app.use(store)
 app.mount('#app')
