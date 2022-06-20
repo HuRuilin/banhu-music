@@ -167,15 +167,7 @@ export default {
       }
     }
   },
-  watch: {
-    $route (newId, oldId) {
-      console.log(newId, oldId)
-      const id = this.$route.query.id || this.singer.id
-      if (id) {
-        this._initialize(id)
-      }
-    }
-  },
+
   methods: {
     // 标签跳转
     tag (cat) {

@@ -37,6 +37,15 @@ const routes: Array<RouteRecordRaw> = [
     name: 'MV',
     component: () => import('../views/MV/index.vue')
   },
+  {
+    path: '/playlist',
+    meta: {
+      title: '歌单',
+      keepAlive: true
+    },
+    name: 'playlist',
+    component: () => import('../views//playlist/index.vue')
+  },
   // 歌单详情
   {
     path: '/playlist-detail',

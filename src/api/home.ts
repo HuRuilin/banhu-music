@@ -92,3 +92,34 @@ export const collectPlaylist = (t, id) => {
     params: { t, id }
   })
 }
+
+/**
+ * @method 获取热门歌单分类
+ */
+export const getHotlist = () => {
+  return request({
+    method: 'get',
+    url: '/playlist/hot'
+  })
+}
+
+/**
+ * @method 获取歌单
+ */
+export const getPlayList = (params) => {
+  return request({
+    method: 'get',
+    url: '/top/playlist',
+    params
+  })
+}
+
+/**
+ * @method 获取歌单分类
+ */
+export const getCatList = () => {
+  return request({
+    url: '/playlist/catlist',
+    method: 'get'
+  })
+}

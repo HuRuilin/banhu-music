@@ -2,17 +2,17 @@
   <div class="playlist-wrap container">
     <div class="filter shadow">
       <div class="title flex-center" @click="openFilter">
-        {{ currentCat }}
+        {{ state.currentCat }}
         <i class="iconfont niceiconfontyoujiantou-copy-copy-copy-copy"></i>
         <transition name="fade">
-          <div class="filter-box shadow" v-if="showFilter">
-            <div class="item" v-for="item of cateList" :key="item.key">
+          <div class="filter-box shadow" v-if="state.showFilter">
+            <div class="item" v-for="item of state.cateList" :key="item.key">
               <h2>
                 <i class="iconfont" :class="item.icon"></i>{{ item.type }}
               </h2>
               <ul>
                 <li
-                  :class="currentCat == sub.name ? 'active' : ''"
+                  :class="state.currentCat == sub.name ? 'active' : ''"
                   v-for="sub of item.list"
                   :key="sub.name"
                   @click="chooseCat(sub.name)"
@@ -28,9 +28,9 @@
         <p>热门标签：</p>
         <ul class="flex-center">
           <li
-            v-for="item of hotCategories"
+            v-for="item of state.hotCategories"
             :key="item.id"
-            :class="currentCat == item.name ? 'active' : ''"
+            :class="state.currentCat == item.name ? 'active' : ''"
             @click="chooseCat(item.name)"
           >
             {{ item.name }}
@@ -40,205 +40,201 @@
       <div class="type">
         <div
           class="item"
-          :class="sortType == 'hot' ? 'active' : ''"
+          :class="state.sortType == 'hot' ? 'active' : ''"
           @click="chooseType('hot')"
         >
           热门
         </div>
         <div
           class="item"
-          :class="sortType == 'new' ? 'active' : ''"
+          :class="state.sortType == 'new' ? 'active' : ''"
           @click="chooseType('new')"
         >
           最新
         </div>
       </div>
     </div>
-    <song-sheet :sheetList="playList" v-loading="fullscreenLoading"></song-sheet>
+    <song-sheet
+      :sheetList="state.playList"
+      v-loading="state.fullscreenLoading"
+    ></song-sheet>
     <div class="page-wrap">
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-size="limit"
+        :current-page="state.currentPage"
+        :page-size="state.limit"
         background
         hide-on-single-page
         layout="total, prev, pager, next"
-        :total="pageTotal"
+        :total="state.pageTotal"
       >
       </el-pagination>
     </div>
   </div>
 </template>
 
-<script>
-import songSheet from 'components/common/songSheet/Index'
-export default {
-  data() {
-    return {
-      categories: {},
-      hotCategories: [],
-      cateList: [],
-      playList: [],
-      showFilter: false,
-      pageTotal: 0,
-      currentPage: 0,
-      limit: 40,
-      offset: 0,
-      currentCat: '全部',
-      sortType: 'hot',
-      typeList: [
-        {
-          key: 0,
-          value: '语种',
-          icon: 'niceyuyan'
-        },
-        {
-          key: 1,
-          value: '风格',
-          icon: 'nicefengge'
-        },
-        {
-          key: 2,
-          value: '场景',
-          icon: 'nicekafeidengdai'
-        },
-        {
-          key: 3,
-          value: '情感',
-          icon: 'niceqingganqingshu'
-        },
-        {
-          key: 4,
-          value: '主题',
-          icon: 'nicepifugexinghuazhuti-xianxing'
-        }
-      ],
-      fullscreenLoading: false
+<script lang="ts" setup>
+import { useRoute } from 'vue-router'
+import { reactive, onMounted } from 'vue'
+import songSheet from '@/components/SongSheet/index'
+import { getHotlist, getCatList, getPlayList } from '@/api/home'
+const route = useRoute()
+const state = reactive({
+  categories: {},
+  hotCategories: [],
+  cateList: [],
+  playList: [],
+  showFilter: false,
+  pageTotal: 0,
+  currentPage: 0,
+  limit: 40,
+  offset: 0,
+  currentCat: '全部',
+  sortType: 'hot',
+  typeList: [
+    {
+      key: 0,
+      value: '语种',
+      icon: 'niceyuyan'
+    },
+    {
+      key: 1,
+      value: '风格',
+      icon: 'nicefengge'
+    },
+    {
+      key: 2,
+      value: '场景',
+      icon: 'nicekafeidengdai'
+    },
+    {
+      key: 3,
+      value: '情感',
+      icon: 'niceqingganqingshu'
+    },
+    {
+      key: 4,
+      value: '主题',
+      icon: 'nicepifugexinghuazhuti-xianxing'
     }
-  },
-  components: {
-    songSheet
-  },
-  computed: {},
-  watch: {},
-  methods: {
-    handleSizeChange(val) {
-      this.limit = val
-      this.offset = this.limit * this.currentPage
-      this.getPlayList()
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val
-      this.offset = (val - 1) * this.limit
-      this.getPlayList()
-    },
-    openFilter() {
-      this.showFilter = !this.showFilter
-    },
-    // 选择最新或者热门
-    chooseType(type) {
-      this.sortType = type
-      this.getPlayList()
-    },
-    // 选择分类
-    chooseCat(cat) {
-      this.currentCat = cat
-      this.getPlayList()
-    },
-    // 获取歌单分类
-    async getCatList() {
-      try {
-        let res = await this.$api.getCatList()
-        if (res.code === 200) {
-          this.categories = res.categories
-          this.cateList = this.categoryGroup(res.sub, 'category')
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    // 获取热门歌单分类
-    async getHotlist() {
-      try {
-        let res = await this.$api.getHotlist()
-        if (res.code === 200) {
-          this.hotCategories = res.tags
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    // 获取歌单 默认全部
-    async getPlayList() {
-      this.fullscreenLoading = true
-      let param = {
-        order: this.sortType,
-        cat: this.currentCat,
-        limit: this.limit,
-        offset: this.offset
-      }
-      try {
-        let res = await this.$api.getPlayList(param)
-        if (res.code === 200) {
-          this.playList = res.playlists
-          this.pageTotal = res.total
-          this.fullscreenLoading = false
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    // 根据分类进行分组
-    categoryGroup(list, field) {
-      var obj = {}
-      for (var i = 0; i < list.length; i++) {
-        for (let item in list[i]) {
-          if (item == field) {
-            obj[list[i][item]] = {
-              list: obj[list[i][field]] ? obj[list[i][field]].list : []
-            }
-          }
-        }
-        obj[list[i][field]].list.push(list[i])
-      }
-      var att = []
-
-      for (let item in obj) {
-        let type = ''
-        let category = ''
-        let icon = ''
-        this.typeList.map(jitem => {
-          if (jitem.key == obj[item].list[0].category) {
-            type = jitem.value
-            category = jitem.key
-            icon = jitem.icon
-          }
-        })
-        att.push({
-          type,
-          category,
-          icon,
-          list: obj[item].list
-        })
-      }
-      return att
+  ],
+  fullscreenLoading: false
+})
+function handleSizeChange (val) {
+  state.limit = val
+  state.offset = state.limit * state.currentPage
+  getPlayListOfSong()
+}
+function handleCurrentChange (val) {
+  state.currentPage = val
+  state.offset = (val - 1) * state.limit
+  getPlayListOfSong()
+}
+function openFilter () {
+  state.showFilter = !state.showFilter
+}
+// 选择最新或者热门
+function chooseType (type) {
+  state.sortType = type
+  getPlayListOfSong()
+}
+// 选择分类
+function chooseCat (cat) {
+  state.currentCat = cat
+  getPlayListOfSong()
+}
+// 获取歌单分类
+async function getCatListOfSong () {
+  try {
+    const res = await getCatList()
+    if (res.data.code === 200) {
+      state.categories = res.data.categories
+      state.cateList = categoryGroup(res.data.sub, 'category')
     }
-  },
-  created() {},
-  mounted() {
-    let cat = this.$route.query.cat
-    console.log(cat)
-    if (cat) {
-      this.currentCat = cat
-    }
-    this.getHotlist()
-    this.getCatList()
-    this.getPlayList()
+  } catch (error) {
+    console.log(error)
   }
 }
+// 获取热门歌单分类
+async function getHotlistOfSong () {
+  try {
+    const res = await getHotlist()
+    if (res.data.code === 200) {
+      state.hotCategories = res.data.tags
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+// 获取歌单 默认全部
+async function getPlayListOfSong () {
+  state.fullscreenLoading = true
+  const param = {
+    order: state.sortType,
+    cat: state.currentCat,
+    limit: state.limit,
+    offset: state.offset
+  }
+  try {
+    const res = await getPlayList(param)
+    if (res.data.code === 200) {
+      state.playList = res.data.playlists
+      state.pageTotal = res.data.total
+      state.fullscreenLoading = false
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+// 根据分类进行分组
+function categoryGroup (list, field) {
+  const obj = {}
+  for (let i = 0; i < list.length; i++) {
+    for (const item in list[i]) {
+      if (item === field) {
+        obj[list[i][item]] = {
+          list: obj[list[i][field]] ? obj[list[i][field]].list : []
+        }
+      }
+    }
+    obj[list[i][field]].list.push(list[i])
+  }
+  const att = []
+
+  for (const item in obj) {
+    let type = ''
+    let category = ''
+    let icon = ''
+    state.typeList.forEach(jitem => {
+      if (jitem.key === obj[item].list[0].category) {
+        type = jitem.value
+        category = jitem.key
+        icon = jitem.icon
+      }
+    })
+    att.push({
+      type,
+      category,
+      icon,
+      list: obj[item].list
+    })
+  }
+  return att
+}
+onMounted(function () {
+  const cat = route.query.cat
+  console.log(cat)
+  if (cat) {
+    state.currentCat = cat
+  }
+  getHotlistOfSong()
+  getCatListOfSong()
+  getPlayListOfSong()
+})
 </script>
-<style lang="stylus" scoped>
+
+<style lang="scss" scoped>
 .fade-enter {
   opacity: 0;
   transform: translate3d(0, 30px, 0);
@@ -279,7 +275,7 @@ export default {
       margin-right: 15px;
       position: relative;
       &::after {
-        content: ''
+        content: "";
         width: 1px;
         height: 20px;
         margin-left: 12px;
@@ -353,7 +349,7 @@ export default {
         li {
           margin: 0 5px;
           padding-right: 10px;
-          cursor: pointer
+          cursor: pointer;
           &:hover {
             color: #888;
           }
