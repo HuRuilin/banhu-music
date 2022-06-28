@@ -6,3 +6,11 @@ declare module '*.vue' {
 }
 
 declare module 'good-storage'
+
+declare type Person ={
+  name:string;
+  age:number;
+  sex?:string;
+}
+
+declare module '*.png';

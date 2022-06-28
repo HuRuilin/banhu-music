@@ -41,8 +41,8 @@ export default {
     } else if (time < 60) {
       secondTime = '00:' + time
     } else {
-      const m = ~~parseInt((time % (1000 * 60 * 60)) / (1000 * 60))
-      const s = ~~parseInt((time % (1000 * 60)) / 1000)
+      const m = ~~parseInt(('' + (time % (1000 * 60 * 60)) / (1000 * 60)))
+      const s = ~~parseInt(('' + (time % (1000 * 60)) / 1000))
       secondTime = Number(m * 60 + s)
     }
     return secondTime
@@ -57,11 +57,11 @@ export default {
     } else if (time < 60) {
       formatTime = '00:' + time
     } else {
-      let m = ~~parseInt((time % (1000 * 60 * 60)) / (1000 * 60))
+      let m = ~~parseInt(('' + (time % (1000 * 60 * 60)) / (1000 * 60)))
       if (m < 10) {
         m = '0' + m
       }
-      let s = ~~parseInt((time % (1000 * 60)) / 1000)
+      let s = ~~parseInt(('' + (time % (1000 * 60)) / 1000))
       if (s < 10) {
         s = '0' + s
       }
@@ -101,15 +101,15 @@ export default {
     const hourC = diffValue / hour
     const minC = diffValue / minute
     if (monthC >= 1) {
-      result = '' + parseInt(monthC) + '月前'
+      result = '' + parseInt(monthC.toString()) + '月前'
     } else if (weekC >= 1) {
-      result = '' + parseInt(weekC) + '周前'
+      result = '' + parseInt(weekC.toString()) + '周前'
     } else if (dayC >= 1) {
-      result = '' + parseInt(dayC) + '天前'
+      result = '' + parseInt(dayC.toString()) + '天前'
     } else if (hourC >= 1) {
-      result = '' + parseInt(hourC) + '小时前'
+      result = '' + parseInt(hourC.toString()) + '小时前'
     } else if (minC >= 1) {
-      result = '' + parseInt(minC) + '分钟前'
+      result = '' + parseInt(minC.toString()) + '分钟前'
     } else {
       result = '刚刚'
     }

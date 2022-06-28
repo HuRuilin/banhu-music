@@ -77,8 +77,9 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router'
 import { reactive, onMounted } from 'vue'
-import songSheet from '@/components/SongSheet/index'
+import songSheet from '@/components/SongSheet/index.vue'
 import { getHotlist, getCatList, getPlayList } from '@/api/home'
+import logoPng from '@/assets/logo.png'
 const route = useRoute()
 const state = reactive({
   categories: {},
@@ -222,7 +223,12 @@ function categoryGroup (list, field) {
   }
   return att
 }
+const test = function (person:Person) {
+  const str = `${person.name}的年龄是${person.age}岁性别是${person.sex}`
+  console.log(str)
+}
 onMounted(function () {
+  test({ name: 'huruilin', age: 22 })
   const cat = route.query.cat
   console.log(cat)
   if (cat) {

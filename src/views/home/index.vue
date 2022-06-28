@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Banner />
+    <Banner ref="bannerRef" />
     <RecommendSongs />
   </div>
 </template>

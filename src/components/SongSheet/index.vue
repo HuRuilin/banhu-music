@@ -47,7 +47,7 @@
 
 <script lang="ts" setup>
 // 歌单列表组件
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import utils from '@/utils/index'
 const router = useRouter()

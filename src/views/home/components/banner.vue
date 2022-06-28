@@ -11,12 +11,7 @@
 <script lang="ts" setup>
 import { reactive, onBeforeMount } from 'vue'
 import { getBanner } from '@/api/home'
- interface Banner {
-  imageUrl:string,
- }
-interface State {
-  list:Banner[]
-}
+import type { State } from '@/types/home'
 const state = reactive<State>({
   list: []
 })
@@ -25,10 +20,10 @@ const getList = async function () {
   const res = await getBanner()
   state.list = res.data.banners
 }
+
 onBeforeMount(() => {
   getList()
 })
-
 </script>
 
 <style scoped lang="scss">

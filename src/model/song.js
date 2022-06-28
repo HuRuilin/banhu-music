@@ -37,7 +37,7 @@ export function createSong (musicData) {
       ? musicData.al.picUrl
       : musicData.album.artist.img1v1Url,
     url: `https://music.163.com/song/media/outer/url?id=${musicData.id}.mp3`,
-    playCount: musicData.playCount || '',
+    playCount: musicData.playCount || 0,
     score: musicData.score || ''
   })
 }
